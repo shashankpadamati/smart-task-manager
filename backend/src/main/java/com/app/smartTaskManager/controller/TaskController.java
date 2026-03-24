@@ -2,38 +2,47 @@ package com.app.smartTaskManager.controller;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.RequestMapping;
+import com.app.smartTaskManager.dto.TaskDTO;
 import com.app.smartTaskManager.models.Task;
 import com.app.smartTaskManager.service.TaskService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.PostMapping;
-
 
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/tasks")
 public class TaskController {
 
     private final TaskService taskService;
-
-    public TaskController(TaskService taskService) {
-        this.taskService = taskService;
+  
+    @GetMapping
+    public List<Task> getAllTasks() {
+        return taskService.getAllTasks();
     }    
 
-    @GetMapping 
-    public String getTasks() {
-        // Logic to get all tasks
-        List<Task> tasks = taskService.getTasks();
+    @PostMapping
+    public Task createTask(@RequestBody TaskDTO dto) {
+        return taskService.createTask(dto);
+    }
 
-        // Return tasks to the view
-        return "tasks"; // Assuming this is the name of the view template
-    }    
+    @GetMapping("/{id}")
+    public Task getTaskById(@PathVariable Long id) {
+        return taskService.getTaskById(id);
+    }
 
-    @PostMapping()
-    public String creatTask (@RequestParam String entity) {
-        //TODO: process POST request
-        
-        return entity;
+    @PutMapping("/{id}")
+    public Task updateTask(@PathVariable Long id, @RequestBody TaskDTO dto){
+        return taskService.updateTask(id, dto);
     }
     
+    @DeleteMapping("/{id}")
+    public void deleteTask(@PathVariable long id){
+        taskService.deleteTask(id);
+    }
+
+    @PatchMapping("/{id}/complete")
+    public Task markComplete(@PathVariable long id){
+        return taskService.markComplete(id);
+    }
 }

@@ -1,10 +1,10 @@
 package com.app.smartTaskManager.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.Data;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import jakarta.persistence.*;
+import lombok.*;
 
 
 @Entity
@@ -13,9 +13,25 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Column(nullable = false)
     private String title;
+
     private String description; 
-    private boolean completed;
+    
+    private boolean completed = false;
+
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Enumerated(EnumType.STRING)
+    private Priority priority = Priority.MEDIUM;
+    public enum Priority {
+    LOW, MEDIUM, HIGH
+    }
+
+    @ElementCollection
+    private List <String> tags;
 
 
 }
+
