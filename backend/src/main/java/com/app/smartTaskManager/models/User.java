@@ -23,19 +23,5 @@ public class User {
     @Size(min=6,message = "password mustbe atleast of 6 characters")
     private String password;//storing the password without hashing ,do it later
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
+    
 }

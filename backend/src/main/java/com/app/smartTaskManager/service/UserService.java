@@ -13,7 +13,7 @@ public class UserService {
     UserRepository repo;
     //logic for rigistering
     public User register(User user){
-        if(repo.existsByUserEmail(user.getEmail())){
+        if(repo.existsByEmail(user.getEmail())){
             throw new RuntimeException("email already present");
         }
         return repo.save(user);
