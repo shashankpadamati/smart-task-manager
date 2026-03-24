@@ -6,33 +6,53 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import com.app.smartTaskManager.dto.TaskDTO;
 import com.app.smartTaskManager.models.Task;
+import com.app.smartTaskManager.models.User;
 import com.app.smartTaskManager.repository.TaskRepository;
+import com.app.smartTaskManager.repository.UserRepository;
 
+// import lombok.RequiredArgsConstructor;
+
+// @RequiredArgsConstructor
 @Service
 public class TaskService {
-   
+    private final UserRepository userRepository;
     private final TaskRepository taskRepository;
 
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository , UserRepository userRepository) {
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
     }
 
-    public List<Task> getAllTasks() {
-        return taskRepository.findAll(
-                Sort.by(Sort.Direction.DESC, "createdAt")
-        );
+    // get all tasks for a user
+    public List<Task> getTasksByUser(Long userId) {
+        return taskRepository.findByUserId(userId, Sort.by(Sort.Direction.DESC, "createdAt"));
     }   
 
-    public Task getTaskById(Long id) {
-        return taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
-    }
     
-    public Task createTask(TaskDTO dto) {
+    // get task by id
+    public Task getTaskById(Long userId, Long taskId) {
+        Task task =  taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+        
+        if (!task.getUser().getId().equals(userId)) {
+        throw new RuntimeException("Unauthorized access");
+        }
+        return task;
+    }
+
+
+    //create task
+    public Task createTask(Long userId, TaskDTO dto) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
         Task task = new Task(); 
         task.setTitle(dto.getTitle());
         task.setDescription(dto.getDescription());
-        task.setTags(dto.getTags());
+        // task.setTags(dto.getTags());
+        task.setDueDate(dto.getDueDate());
+        task.setUser(user); 
+
         if (dto.getPriority() != null) {
             task.setPriority(Task.Priority.valueOf(dto.getPriority().toUpperCase()));
         }
@@ -44,12 +64,17 @@ public class TaskService {
         // }        
     }
 
-    public Task updateTask(Long id, TaskDTO dto) {
-        Task task = getTaskById(id);
+
+    // update task
+    public Task updateTask(Long userId, Long taskId, TaskDTO dto) {
+        Task task = getTaskById(userId, taskId);    
 
         task.setTitle(dto.getTitle());
         task.setDescription(dto.getDescription());
-        task.setTags(dto.getTags());
+        // task.setTags(dto.getTags());
+        task.setDueDate(dto.getDueDate());
+
+
         if (dto.getPriority() != null) {
             task.setPriority(Task.Priority.valueOf(dto.getPriority().toUpperCase()));
         }
@@ -57,13 +82,17 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    public void deleteTask(Long id) {
-        taskRepository.deleteById(id);
+
+    // delete task
+    public void deleteTask(Long userId, Long taskId) {
+        Task task = getTaskById(userId, taskId); 
+        taskRepository.delete(task);
     }
 
-    public Task markComplete(Long id) {
-        Task task = getTaskById(id);
-        task.setCompleted(true);
+    // toggle complete
+    public Task toggleComplete(Long userId, Long taskId) {
+        Task task = getTaskById(userId, taskId);
+        task.setCompleted(task.isCompleted() ? false : true); // toggle complete status
         return taskRepository.save(task);
     }
 
