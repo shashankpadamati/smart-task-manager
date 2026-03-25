@@ -11,38 +11,45 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/tasks")
+@RequestMapping("/users/{userId}/tasks")
 public class TaskController {
 
     private final TaskService taskService;
-  
+    
+    // get all tasks for a user
     @GetMapping
-    public List<Task> getAllTasks() {
-        return taskService.getAllTasks();
+    public List<Task> getAllTasks(@PathVariable Long userId) {
+        return taskService.getTasksByUser(userId);
     }    
 
+    // create task
     @PostMapping
-    public Task createTask(@RequestBody TaskDTO dto) {
-        return taskService.createTask(dto);
+    public Task createTask(@PathVariable Long userId, @RequestBody TaskDTO dto) {
+        return taskService.createTask(userId, dto);
     }
 
-    @GetMapping("/{id}")
-    public Task getTaskById(@PathVariable Long id) {
-        return taskService.getTaskById(id);
+    // get task by id
+    @GetMapping("/{taskId}")
+    public Task getTaskById(@PathVariable Long userId, @PathVariable Long taskId){
+        return taskService.getTaskById(userId, taskId);
     }
 
-    @PutMapping("/{id}")
-    public Task updateTask(@PathVariable Long id, @RequestBody TaskDTO dto){
-        return taskService.updateTask(id, dto);
+    // update task
+    @PutMapping("/{taskId}")
+    public Task updateTask(@PathVariable Long userId, @PathVariable Long taskId, @RequestBody TaskDTO dto){
+        return taskService.updateTask(userId, taskId, dto);
     }
     
-    @DeleteMapping("/{id}")
-    public void deleteTask(@PathVariable long id){
-        taskService.deleteTask(id);
+    // delete task
+    @DeleteMapping("/{taskId}")
+    public void deleteTask(@PathVariable Long userId, @PathVariable Long taskId){
+        taskService.deleteTask(userId, taskId);
     }
 
-    @PatchMapping("/{id}/complete")
-    public Task markComplete(@PathVariable long id){
-        return taskService.markComplete(id);
+    // toggle complete
+    @PatchMapping("/{taskId}/complete")
+    public Task toggleComplete(@PathVariable Long userId, @PathVariable Long taskId){
+        return taskService.toggleComplete(userId, taskId);
     }
 }
+

@@ -9,6 +9,7 @@ import lombok.*;
 
 @Entity
 @Data
+@Table(name = "tasks")
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -26,11 +27,23 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private Priority priority = Priority.MEDIUM;
     public enum Priority {
-    LOW, MEDIUM, HIGH
+        LOW, MEDIUM, HIGH
     }
 
-    @ElementCollection
-    private List <String> tags;
+    private LocalDateTime dueDate;
+    
+    // USER Relation
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    // SubTasks Relation
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "task_id")
+    private List<SubTask> subtasks;
+
+    // @ElementCollection
+    // private List <String> tags;
 
 
 }
