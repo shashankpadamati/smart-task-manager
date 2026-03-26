@@ -42,8 +42,12 @@ public class Task {
     @JoinColumn(name = "task_id")
     private List<SubTask> subtasks;
 
-    // @ElementCollection
-    // private List <String> tags;
+    // Tags Relation
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "task_tags",
+            joinColumns = @JoinColumn(name = "task_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private java.util.Set<Tag> tags = new java.util.HashSet<>();
 
 
 }
