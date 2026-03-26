@@ -18,6 +18,8 @@ public class TaskResponse {
     private String priority;
     private LocalDateTime dueDate;
     private List<SubTaskResponse> subtasks;
+    private List<String> tags;
+    private boolean isOverdue;
 
     public static TaskResponse fromEntity(Task task) {
         TaskResponse response = new TaskResponse();
@@ -29,6 +31,13 @@ public class TaskResponse {
         response.setPriority(task.getPriority().name());
         response.setDueDate(task.getDueDate());
 
+        // Overdue check
+        if (task.getDueDate() != null && !task.isCompleted()) {
+            response.setOverdue(task.getDueDate().isBefore(LocalDateTime.now()));
+        } else {
+            response.setOverdue(false);
+        }
+
         if (task.getSubtasks() != null) {
             response.setSubtasks(
                 task.getSubtasks().stream()
@@ -37,6 +46,16 @@ public class TaskResponse {
             );
         } else {
             response.setSubtasks(Collections.emptyList());
+        }
+
+        if (task.getTags() != null) {
+            response.setTags(
+                task.getTags().stream()
+                    .map(com.app.smartTaskManager.models.Tag::getName)
+                    .collect(Collectors.toList())
+            );
+        } else {
+            response.setTags(Collections.emptyList());
         }
 
         return response;

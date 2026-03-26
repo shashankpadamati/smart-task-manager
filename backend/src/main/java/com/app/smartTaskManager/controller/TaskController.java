@@ -20,9 +20,15 @@ public class TaskController {
     
     // get all tasks for the authenticated user
     @GetMapping
-    public List<TaskResponse> getAllTasks(@AuthenticationPrincipal UserDetailsImpl currentUser) {
-        return taskService.getTasksByUser(currentUser.getId());
-    }    
+    public List<TaskResponse> getAllTasks(
+            @AuthenticationPrincipal UserDetailsImpl currentUser,
+            @RequestParam(required = false) Boolean completed,
+            @RequestParam(required = false) String priority,
+            @RequestParam(required = false) String tag,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false, defaultValue = "newest") String sortBy) {
+        return taskService.getTasksByUser(currentUser.getId(), completed, priority, tag, search, sortBy);
+    }
 
     // create task
     @PostMapping

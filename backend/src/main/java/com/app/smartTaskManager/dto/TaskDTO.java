@@ -13,6 +13,5 @@ public class TaskDTO {
     private LocalDateTime dueDate;
     private List<SubTaskDTO> subtasks;
 
-    // have to work on this part
     private List<String> tags;
 }
