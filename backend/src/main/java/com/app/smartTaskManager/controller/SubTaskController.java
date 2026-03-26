@@ -4,7 +4,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import com.app.smartTaskManager.dto.SubTaskDTO;
-import com.app.smartTaskManager.models.SubTask;
+import com.app.smartTaskManager.dto.response.SubTaskResponse;
 import com.app.smartTaskManager.security.services.UserDetailsImpl;
 import com.app.smartTaskManager.service.SubTaskService;
 
@@ -18,7 +18,7 @@ public class SubTaskController {
 
     // create subtask
     @PostMapping
-    public SubTask createSubTask(@AuthenticationPrincipal UserDetailsImpl currentUser, @PathVariable Long taskId, @RequestBody SubTaskDTO dto) {
+    public SubTaskResponse createSubTask(@AuthenticationPrincipal UserDetailsImpl currentUser, @PathVariable Long taskId, @RequestBody SubTaskDTO dto) {
         return subTaskService.createSubTask(currentUser.getId(), taskId, dto.getTitle());
     }
 
@@ -30,7 +30,7 @@ public class SubTaskController {
 
     // toggle subtask complete
     @PatchMapping("/{subTaskId}/complete")
-    public SubTask toggleSubTaskComplete(@AuthenticationPrincipal UserDetailsImpl currentUser, @PathVariable Long taskId, @PathVariable Long subTaskId) {
+    public SubTaskResponse toggleSubTaskComplete(@AuthenticationPrincipal UserDetailsImpl currentUser, @PathVariable Long taskId, @PathVariable Long subTaskId) {
         return subTaskService.toggleSubTaskComplete(currentUser.getId(), taskId, subTaskId);
     }
 }
