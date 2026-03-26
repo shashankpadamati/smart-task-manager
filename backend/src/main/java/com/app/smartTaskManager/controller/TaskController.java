@@ -3,7 +3,7 @@ package com.app.smartTaskManager.controller;
 import java.util.List;
 
 import com.app.smartTaskManager.dto.TaskDTO;
-import com.app.smartTaskManager.models.Task;
+import com.app.smartTaskManager.dto.response.TaskResponse;
 import com.app.smartTaskManager.security.services.UserDetailsImpl;
 import com.app.smartTaskManager.service.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -20,25 +20,25 @@ public class TaskController {
     
     // get all tasks for the authenticated user
     @GetMapping
-    public List<Task> getAllTasks(@AuthenticationPrincipal UserDetailsImpl currentUser) {
+    public List<TaskResponse> getAllTasks(@AuthenticationPrincipal UserDetailsImpl currentUser) {
         return taskService.getTasksByUser(currentUser.getId());
     }    
 
     // create task
     @PostMapping
-    public Task createTask(@AuthenticationPrincipal UserDetailsImpl currentUser, @RequestBody TaskDTO dto) {
+    public TaskResponse createTask(@AuthenticationPrincipal UserDetailsImpl currentUser, @RequestBody TaskDTO dto) {
         return taskService.createTask(currentUser.getId(), dto);
     }
 
     // get task by id
     @GetMapping("/{taskId}")
-    public Task getTaskById(@AuthenticationPrincipal UserDetailsImpl currentUser, @PathVariable Long taskId){
+    public TaskResponse getTaskById(@AuthenticationPrincipal UserDetailsImpl currentUser, @PathVariable Long taskId){
         return taskService.getTaskById(currentUser.getId(), taskId);
     }
 
     // update task
     @PutMapping("/{taskId}")
-    public Task updateTask(@AuthenticationPrincipal UserDetailsImpl currentUser, @PathVariable Long taskId, @RequestBody TaskDTO dto){
+    public TaskResponse updateTask(@AuthenticationPrincipal UserDetailsImpl currentUser, @PathVariable Long taskId, @RequestBody TaskDTO dto){
         return taskService.updateTask(currentUser.getId(), taskId, dto);
     }
     
@@ -50,7 +50,7 @@ public class TaskController {
 
     // toggle complete
     @PatchMapping("/{taskId}/complete")
-    public Task toggleComplete(@AuthenticationPrincipal UserDetailsImpl currentUser, @PathVariable Long taskId){
+    public TaskResponse toggleComplete(@AuthenticationPrincipal UserDetailsImpl currentUser, @PathVariable Long taskId){
         return taskService.toggleComplete(currentUser.getId(), taskId);
     }
 }

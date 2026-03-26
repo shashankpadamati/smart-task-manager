@@ -2,6 +2,7 @@ package com.app.smartTaskManager.service;
 
 import org.springframework.stereotype.Service;
 
+import com.app.smartTaskManager.dto.response.SubTaskResponse;
 import com.app.smartTaskManager.models.SubTask;
 import com.app.smartTaskManager.models.Task;
 import com.app.smartTaskManager.repository.SubTaskRepository;
@@ -18,16 +19,16 @@ public class SubTaskService {
 
     
     // create subtask
-    public SubTask createSubTask(Long userId, Long taskId, String title) {
+    public SubTaskResponse createSubTask(Long userId, Long taskId, String title) {
 
         Task task = taskRepository.findByIdAndUserId(taskId, userId)
                 .orElseThrow(() -> new RuntimeException("Task not found or unauthorized"));
 
         SubTask subTask = new SubTask();
         subTask.setTitle(title);
-        subTask.setTask(task); //link subtask 
+        subTask.setTask(task);
 
-        return subTaskRepository.save(subTask);         
+        return SubTaskResponse.fromEntity(subTaskRepository.save(subTask));
     }
 
     
@@ -47,7 +48,7 @@ public class SubTaskService {
     }
 
     // toggle subtask complete
-    public SubTask toggleSubTaskComplete(Long userId, Long taskId, Long subTaskId) {
+    public SubTaskResponse toggleSubTaskComplete(Long userId, Long taskId, Long subTaskId) {
 
         Task task = taskRepository.findByIdAndUserId(taskId, userId)
                 .orElseThrow(() -> new RuntimeException("Task not found or unauthorized"));
@@ -60,6 +61,6 @@ public class SubTaskService {
         }
 
         subTask.setCompleted(!subTask.isCompleted());
-        return subTaskRepository.save(subTask);
+        return SubTaskResponse.fromEntity(subTaskRepository.save(subTask));
     }
 }
