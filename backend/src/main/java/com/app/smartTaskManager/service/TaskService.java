@@ -78,24 +78,34 @@ public class TaskService {
         Sort sort;
         if ("alphabetical".equalsIgnoreCase(sortBy)) {
             sort = Sort.by(Sort.Direction.ASC, "title");
-        } else if ("priority".equalsIgnoreCase(sortBy)) {
-            // Sorting by enum ordinal or specific logic? 
-            // We'll use ordinal or we could map to a value. 
-            // Let's stick to priority field descending (HIGH -> MEDIUM -> LOW might need custom logic depending on enum order)
-            sort = Sort.by(Sort.Direction.DESC, "priority");
         } else {
             // Default: Newest first
             sort = Sort.by(Sort.Direction.DESC, "createdAt");
         }
 
-        // Custom task ordering behavior: completed tasks to bottom
-        // Spring Data Sort doesn't easily support multi-field sorting where one is a boolean expression
-        // unless we use multiple fields.
         Sort finalSort = Sort.by(Sort.Direction.ASC, "completed").and(sort);
 
-        return taskRepository.findAll(spec, finalSort).stream()
+        List<TaskResponse> responses = taskRepository.findAll(spec, finalSort).stream()
                 .map(TaskResponse::fromEntity)
                 .collect(Collectors.toList());
+
+        if ("priority".equalsIgnoreCase(sortBy)) {
+            responses.sort((t1, t2) -> {
+                int c1 = Boolean.compare(t1.isCompleted(), t2.isCompleted());
+                if (c1 != 0) return c1;
+                
+                String prio1 = t1.getPriority() != null ? t1.getPriority().toUpperCase() : "MEDIUM";
+                String prio2 = t2.getPriority() != null ? t2.getPriority().toUpperCase() : "MEDIUM";
+                
+                int p1 = Task.Priority.valueOf(prio1).ordinal();
+                int p2 = Task.Priority.valueOf(prio2).ordinal();
+                if (p1 != p2) return Integer.compare(p2, p1); // DESC for HIGH > LOW
+                
+                return t2.getCreatedAt().compareTo(t1.getCreatedAt()); // DESC
+            });
+        }
+
+        return responses;
     }
 
     // get task by id (internal — returns entity)
