@@ -5,7 +5,6 @@ import '../../providers/auth_provider.dart';
 import '../../providers/task_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../widgets/task_card.dart';
-import '../../widgets/task_form_dialog.dart';
 import '../../widgets/filter_bar.dart';
 import '../../widgets/empty_state.dart';
 
@@ -358,18 +357,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-      ),
-
-      // ── FAB ──
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => showDialog(
-          context: context,
-          builder: (_) => const TaskFormDialog(),
-        ),
-        icon: const Icon(Icons.add_rounded),
-        label: const Text('New Task',
-            style: TextStyle(fontWeight: FontWeight.w600)),
-        elevation: 4,
       ),
     );
   }

@@ -7,7 +7,7 @@ import 'providers/task_provider.dart';
 import 'providers/theme_provider.dart';
 import 'services/api_service.dart';
 import 'screens/auth/auth_screen.dart';
-import 'screens/home/home_screen.dart';
+import 'screens/main_shell.dart';
 
 void main() {
   runApp(const SmartTaskManagerApp());
@@ -51,7 +51,7 @@ class _SmartTaskManagerAppState extends State<SmartTaskManagerApp> {
             home: Consumer<AuthProvider>(
               builder: (context, auth, _) {
                 if (auth.isAuthenticated) {
-                  return const HomeScreen();
+                  return const MainShell();
                 }
                 return const AuthScreen();
               },
